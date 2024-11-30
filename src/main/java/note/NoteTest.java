@@ -1,16 +1,14 @@
 package note;
 
-import readFile.ReadMD;
+import readFile.MarkdownFileSyncer;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import java.sql.SQLException;
 
 /**
  * @author 18324
  */
 public class NoteTest {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws SQLException {
 //        ArrayList<String> tags = new ArrayList<>(List.of("Vue", "idea"));
 //        NoteCard note = new NoteCard(1, "title", "pic", "category", "content", "date", "author", tags);
 //        System.out.println(note.getTags());
@@ -31,5 +29,7 @@ public class NoteTest {
 //        } catch (IOException ioException) {
 //            System.out.println("error: " + ioException);
 //        }
+        MarkdownFileSyncer markdownFileSyncer = new MarkdownFileSyncer();
+        markdownFileSyncer.setAllMdFiles();
     }
 }

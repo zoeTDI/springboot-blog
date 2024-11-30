@@ -1,7 +1,9 @@
 package readFile;
 
-import java.io.*;
-import java.sql.Array;
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.*;
 
 /**
@@ -84,7 +86,7 @@ public class ReadMD {
                 while ((line = reader.readLine()) != null && !"---".equals(line.trim())) {
                     continue;
                 }
-            }else {
+            } else {
                 reader = new BufferedReader(new FileReader(this.path));
             }
 
@@ -99,24 +101,7 @@ public class ReadMD {
         } catch (IOException e) {
             throw new IOException("读取文件时发生错误: " + this.path, e);
         }
-
-//        this.content = "";
-//        BufferedReader reader = new BufferedReader(new FileReader(this.path));
-//        String templateString = reader.readLine();
-//        if (templateString != null && "---".equals(templateString.trim())) {
-//            if ((templateString = reader.readLine()) != null) {
-//                while (!"---".equals(reader.readLine().trim())) {
-//                    continue;
-//                }
-//            } else {
-//                reader = new BufferedReader(new FileReader(this.path));
-//            }
-//        }
-//        while ((templateString = reader.readLine()) != null) {
-//            this.content += templateString + "\n";
-//        }
     }
-
     public String getContent() {
         return this.content;
     }
