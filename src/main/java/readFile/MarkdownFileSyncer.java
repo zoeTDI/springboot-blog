@@ -22,8 +22,6 @@ public class MarkdownFileSyncer {
     private List<String> allMdFiles;
     // 数据库管理对象
     private DBManager db;
-    // 数据库连接对象
-    private Connection conn;
     private static final Logger logger = LoggerFactory.getLogger(MarkdownFileSyncer.class);
 
     /**
@@ -31,10 +29,11 @@ public class MarkdownFileSyncer {
      */
     public MarkdownFileSyncer() {
         this.allMdFiles = new ArrayList<>();
+        Connection conn = null;
         if (this.getMdFiles()) {
             this.db = new DBManager();
             try {
-                this.conn = db.getConnection("jdbc:mysql://localhost:3306/blog", "root", "123456");
+                conn = db.getConnection("jdbc:mysql://localhost:3306/blog", "root", "123456");
             } catch (SQLException | ClassNotFoundException e) {
                 logger.error("Error connecting to database: " + e.getMessage());
             }
@@ -43,6 +42,7 @@ public class MarkdownFileSyncer {
             }
             this.allMdFiles = new ArrayList<>();
             try {
+                assert conn != null;
                 db.closeConnection(conn);
             } catch (SQLException e) {
 //                e.printStackTrace();
@@ -77,6 +77,7 @@ public class MarkdownFileSyncer {
      */
     public boolean setAllMdFiles() {
         try {
+            Connection conn = db.getConnection("jdbc:mysql://localhost:3306/blog", "root", "123456");
             int count = 0;
             // 查询数据库中的笔记记录
             ResultSet rs = db.executeQuery("SELECT * FROM notes", conn);
@@ -96,6 +97,8 @@ public class MarkdownFileSyncer {
             }
         } catch (SQLException e) {
             logger.error("Error executing query: " + e.getMessage());
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
         }
         return false;
     }
@@ -105,6 +108,7 @@ public class MarkdownFileSyncer {
      */
     public void updateAllMdFiles() {
         try {
+            Connection conn = db.getConnection("jdbc:mysql://localhost:3306/blog", "root", "123456");
             int count = 0;
             for (String mdFile : this.allMdFiles) {
                 String selectString = "SELECT path FROM notes WHERE path = '" + mdFile + "';";
@@ -122,6 +126,8 @@ public class MarkdownFileSyncer {
             System.out.println("共插入 " + count + " 条记录");
         } catch (SQLException e) {
             System.out.println("Error executing query: " + e.getMessage());
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
         }
     }
 
