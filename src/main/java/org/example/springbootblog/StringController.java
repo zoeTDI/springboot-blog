@@ -42,10 +42,7 @@ public class StringController {
                     File file = new File(filePath);
                     if (file.exists()) {
                         MarkdownParser markdownParser = new MarkdownParser(filePath);
-                        Map<String, Object> mb = markdownParser.getYaml();
-                        mb.put("content", markdownParser.getContent());
-//                        logger.info(mb.toString());
-                        mbs.add(mb);
+                        mbs.add(markdownParser.getMdInfo());
                     } else {
 //                        从数据库中删除该数据
                         sql = "DELETE FROM notes WHERE path = '" + filePath.replace("\\", "\\\\") + "';";
@@ -56,7 +53,6 @@ public class StringController {
                         }
                     }
                 }
-
             } else {
                 logger.info("Not data found.");
             }

@@ -8,6 +8,8 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Markdown解析器类，用于解析包含YAML前导信息的Markdown文件
@@ -141,5 +143,41 @@ private void setYaml() throws IOException {
     public String getContent() {
         return this.content;
     }
+    public Map<String, Object> getMdInfo() {
+        Map<String, Object> mb = getYaml();
+        String content = getContent();
+        mb.put("content", content);
+        mb.put("summary", extractAndCleanContent(content, 100));
+        return mb;
+    }
+    /**
+     * 从输入字符串中提取前 maxLength 个字符，并移除所有的 Markdown 图片链接。
+     *
+     * @param input 输入字符串
+     * @param maxLength 提取的最大字符数
+     * @return 处理后的字符串
+     */
+    private String extractAndCleanContent(String input, int maxLength) {
+        // 获取前 maxLength 个字符
+        String firstPart = input.substring(0, Math.min(input.length(), maxLength));
+
+        // 正则表达式匹配 Markdown 图片链接
+        Pattern pattern = Pattern.compile("!\\[.*?\\]\\(.*?\\)");
+        Matcher matcher = pattern.matcher(firstPart);
+
+        // 移除所有匹配的图片链接
+        StringBuilder result = new StringBuilder();
+        int lastEnd = 0;
+
+        while (matcher.find()) {
+            result.append(firstPart, lastEnd, matcher.start());
+            lastEnd = matcher.end();
+        }
+        result.append(firstPart.substring(lastEnd));
+
+        // 确保结果不超过 maxLength 个字符
+        return result.substring(0, Math.min(result.length(), maxLength));
+    }
+
 }
 
